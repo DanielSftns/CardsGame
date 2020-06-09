@@ -1,0 +1,323 @@
+*{
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body{
+	background: rgba(0,0,0,.05);
+	min-height: 100vh;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: 'Poppins', sans-serif;
+}
+
+.config,
+.game-area{
+	width: 90%;
+	height: 90%;
+	padding: 1em 2em;
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	grid-template-rows: 1fr;
+}
+
+.config{
+	border-radius: 1em;
+	box-shadow: 0 0 10px 0 rgba(0,0,0,.7);
+	position: absolute;
+	z-index: 100;
+}
+
+.config-title{
+	position: absolute;
+	left: 2em;
+	top: 1em;
+	font-size: 2em;
+}
+
+.config .config-deck{
+    justify-self: center;
+	align-self: center;
+}
+
+.config .config-deck .add-button{
+	border: none;
+	outline: none;
+	font-size: 2.5em;
+	color: green;
+	color: #3e6196;
+}
+.config .config-deck .add-button:hover{
+	cursor: pointer;
+	color: #406db1;
+}
+
+.config .config-deck .config-checkbox:checked + .config-deck__options{
+	display: block;
+}
+
+.config-deck__options{
+	display: none;
+}
+
+.config-deck__options .select .select_button{
+	display: flex;
+	justify-content: space-between;
+	align-self: center;
+	color: white;
+}
+
+.config-deck__options .select,
+.config-deck__options .number-of-cards{
+	position: relative;
+	background: hsla(0, 100%, 40%, 1);
+	padding: .5em 1em;
+	margin-bottom: .5em;
+	border-radius: 1em;
+	border: none;
+	width: 100%;
+	cursor: pointer;
+}
+
+.config-deck__options .select:hover,
+.config-deck__options .number-of-cards:hover{
+	background: hsla(0, 100%, 45%, 1);
+}
+
+::placeholder,
+.number-of-cards,
+.config-deck__options .select .title{
+	color: white;
+	font-size: 1em;
+	font-weight: 700;
+	outline: none;
+}
+
+.config-deck__options .select .title{
+	font-size: 1em;
+}
+
+.config-deck__options .select .option-area{
+	position: absolute;
+	top: calc(100% + 10px);
+	left: calc(50% - 45%);
+	background: white;
+	width: 90%;
+	border-radius: .5em;
+	display: none;
+	border-radius: .5em;
+	user-select: none;
+	z-index: 100;
+}
+
+.config-deck__options .select .option-area > div{
+	overflow-y: scroll;
+	max-height: 10em;
+}
+
+.config-deck__options .select .option-area:before{
+	content: "";
+	display: block;
+	position: absolute;
+	top: -20px;
+	left: calc(50% - 5px); 
+	z-index: 100;
+	border-bottom: 10px solid white;
+	border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-top: 10px solid transparent;
+}
+
+.config-deck__options .select .select-checkbox:checked+.option-area{
+	display: block;
+}
+
+.config-deck__options .select .option-area .option{
+	padding: 1em;
+	margin-bottom: .5em;
+	margin-top: .5em;
+	text-align: center;
+	background-color: rgba(0,0,0,.1);
+	font-size: .8em;
+}
+
+.config-deck__options .select .option-area .option:hover{
+	cursor: pointer;
+	background-color: rgba(0,0,0,.2); 
+}
+
+.config-deck__options .actions{
+	width: 100%;
+	display: flex;
+	justify-content: space-around;
+}
+
+.config-deck__options .actions button{
+	border: none;
+	outline: none;
+	width: 45%;
+	font-size: 1.5em;
+	padding: .25em;
+	border-radius: .25em;
+	color: white;
+}
+
+.config-deck__options .actions .confirm{
+	background-color: hsl(0, 4%, 64%);
+}
+.config-deck__options .actions .confirm.active{
+	background-color: hsl(0, 4%, 45%);
+}
+.config-deck__options .actions .confirm.active:hover{
+	background-color: hsl(0, 4%, 40%);
+	cursor: pointer;
+}
+
+.config-deck__options .actions .cancel{
+	background-color: red;
+	background: hsla(0, 100%, 40%, 1);
+}
+.config-deck__options .actions .cancel:hover{
+	background: hsla(0, 100%, 45%, 1);
+	cursor: pointer;
+}
+
+
+.start-game{
+	position: absolute;
+	right: 3em;
+	bottom: 2em;
+	padding: 1.5em 7em;
+	border: none;
+	outline: none;
+	border-radius: 1em;
+	font-weight: 700;
+	font-size: 1em;
+	box-shadow: inset 0 -3px 0 0 rgba(0,0,0,.2);
+	background-color: hsl(0, 4%, 64%);
+
+	color: rgba(255,255,255,.4);
+}
+
+.start-game i{
+	position: relative;
+	left: 2em;
+	font-size: 1em;
+}
+
+.start-game.active{
+	background-color: hsl(0, 4%, 40%);
+
+	color: white;
+}
+
+.start-game.active:hover{
+	background-color: hsl(0, 4%, 35%);
+	cursor: pointer;
+}
+
+.start-game.active:active{
+	transform: scale(0.95);
+}
+
+.game-area{
+	opacity: 1;
+	grid-template-rows: 1fr 1fr;
+}
+
+.deck{
+	justify-self: center; 
+	align-self: center;
+	position: relative;
+}
+
+.deck .card{
+	cursor: pointer;
+}
+
+.card{
+	width: 14em;
+	height: 21.4em;
+	transform-style: preserve-3d;
+	position: absolute;
+	top: calc(50% - 10.7em);
+	left: calc(50% - 7em);
+	top: 0;
+	left: 0;
+	user-select: none;
+}
+
+.game-area.mode-config .card::before{
+	content: "";
+	display: block;
+    background: rgba(0,0,0,.5);
+    width: 100%;
+    height: 100%;
+    z-index: 425;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 1em;
+}
+
+.front,
+.reverse{
+	width: 100%;
+	height: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	border-radius: 1em;	
+	box-shadow: inset 0 0 0 1px rgba(0,0,0,.5);
+
+}
+
+.reverse{
+	background-image: url('../img/card-reverse.PNG');
+	transform: rotateY(180deg);
+	backface-visibility: hidden;
+	background-repeat: no-repeat;
+    background-size: 130%;
+    background-position: 46% 57%;
+}
+
+img{
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: cover;
+	border-radius: 1em;
+}
+
+.card.see{
+	animation: seeCard 3s ease forwards;
+}
+
+@keyframes seeCard{
+	0%{
+		top: calc(50% - 10.7em);
+		z-index: 100;
+	}
+	30%{
+		transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+	}
+	70%{
+		transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
+	}
+	100%{
+		transform: rotateX(-70deg) rotateY(0deg) rotateZ(10deg);
+		top: -100%;
+		z-index: 100;
+	}
+}
+
+.deckDiscarded,
+.deck{
+	width: 14em;
+	height: 21.4em;
+	justify-self: center; 
+	align-self: center;
+	position: relative;
+}
