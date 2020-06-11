@@ -1,5 +1,9 @@
 "use strict";
 
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
+
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
+
 var startGameButton = document.querySelector('.start-game');
 var addButtons = document.querySelectorAll('.add-button');
 addButtons.forEach(function (button) {
@@ -19,7 +23,14 @@ addButtons.forEach(function (button) {
         var numberDeck = button.parentNode.classList[1].slice(-1);
         var deck = document.querySelector(".deck".concat(numberDeck));
         var configCard = confirmButton.parentNode.parentNode;
-        addCardsInDeck(deck, configCard);
+        var numberCards = configCard.querySelector(".number-of-cards").value;
+        var suit = configCard.querySelector(".suit").textContent;
+        var cardInSuit = configCard.querySelector(".card-in-suit").textContent;
+        addCardsInDeck(deck, {
+          numberCards: numberCards,
+          suit: suit,
+          cardInSuit: cardInSuit
+        });
         button.style.display = 'block';
         checkbox.checked = false;
         resetConfigCard(button.parentNode);
@@ -67,6 +78,7 @@ startGameButton.addEventListener('click', function () {
     document.querySelector('.game-area').classList.remove('mode-config');
     ordenDecks();
     document.querySelector('.config').style.display = 'none';
+    document.body.style.minHeight = "65em";
   }
 });
 var cardsContainers = document.querySelectorAll('.deck');
@@ -76,25 +88,52 @@ cardsContainers.forEach(function (cardsContainer) {
   cardsContainer.addEventListener('click', function () {
     if (!animationRunning && cardsContainer.childElementCount > 0) {
       animationRunning = true;
-      var cardsCount = cardsContainer.childElementCount - 1;
-      var cardNumber = Math.round(Math.random() * cardsCount);
+      var cardsCount = cardsContainer.querySelectorAll('.card').length - 1;
+      var cardNumber = getRandomIntInclusive(0, cardsCount);
       var cardRandom = cardsContainer.querySelectorAll('.card')[cardNumber];
       var cardForAnimation = cardsContainer.querySelectorAll('.card')[cardsCount];
       var cardForAnimationContent = cardForAnimation.innerHTML;
       var cardRandomContent = cardRandom.innerHTML;
-      cardForAnimation.innerHTML = cardRandomContent;
       cardRandom.innerHTML = cardForAnimationContent;
-      cardForAnimation.classList.add('see');
+      cardForAnimation.innerHTML = cardRandomContent;
+      var deckNumber = cardsContainer.classList[1].slice(-1);
+      var deckDiscarded = document.querySelector(".deckDiscarded".concat(deckNumber));
+      cardForAnimation.style.zIndex = "100";
+      var space = 0;
+
+      if (deckDiscarded.childElementCount > 0) {
+        space = getSpace(deckDiscarded.querySelectorAll('.card')[deckDiscarded.childElementCount - 1].style.transform);
+      }
+
+      cardForAnimation.style.transition = "all 1s ease";
+      cardForAnimation.style.transform = "rotateX(0deg) rotateY(0deg) rotateZ(0deg)";
+      cardForAnimation.style.top = "calc(-100% - ".concat(space, "px)");
       setTimeout(function () {
-        var deckNumber = cardsContainer.classList[1].slice(-1);
-        var deckDiscarded = document.querySelector(".deckDiscarded".concat(deckNumber));
-        deckDiscarded.appendChild(cardForAnimation);
-        ordenDecksDiscarded(cardForAnimation);
-        animationRunning = false;
-      }, 3000);
+        cardForAnimation.style.top = "calc(-100% - ".concat(space, "px)");
+        setTimeout(function () {
+          cardForAnimation.style.transform = "rotateX(-70deg) rotateY(0deg) rotateZ(10deg)";
+          setTimeout(function () {
+            deckDiscarded.appendChild(cardForAnimation);
+            ordenDeckDiscarded(deckDiscarded);
+            animationRunning = false;
+          }, 1000);
+        }, 200);
+      }, 1000);
     }
   });
 });
+
+function getSpace(cardStyle) {
+  var param1 = cardStyle.indexOf('-') + 1;
+  var param2 = cardStyle.indexOf(')');
+  return parseInt(cardStyle.slice(param1, param2));
+}
+
+function getRandomIntInclusive(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 function ordenDeck(deck) {
   var cards = deck.querySelectorAll('.card');
@@ -120,18 +159,23 @@ function ordenDecks() {
   }
 }
 
-function ordenDecksDiscarded() {
-  for (var i = 0; i < decksDiscarded.length; i++) {
-    var cards = decksDiscarded[i].querySelectorAll('.card');
-    var space = 5;
+function ordenDeckDiscarded(deckDiscarded) {
+  var cards = deckDiscarded.querySelectorAll('.card');
 
-    for (var _i2 = 0; _i2 < cards.length; _i2++) {
-      cards[_i2].classList.remove('see');
-
-      cards[_i2].style.transform = "translate(0px, -".concat(space, "px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)");
-      cards[_i2].style.zIndex = _i2;
-      space += 5;
-    }
+  if (deckDiscarded.childElementCount - 2 >= 0) {
+    var card = cards[deckDiscarded.childElementCount - 2];
+    var zIndex = card.style.zIndex;
+    var space = getSpace(card.style.transform);
+    var position = deckDiscarded.childElementCount - 1;
+    cards[position].style.transition = "none";
+    cards[position].style.top = "0";
+    cards[position].style.zIndex = "".concat(parseInt(zIndex) + 1);
+    cards[position].style.transform = "translate(0px, -".concat(space + 5, "px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)");
+  } else {
+    cards[0].style.transition = "none";
+    cards[0].style.top = "0";
+    cards[0].style.zIndex = "0";
+    cards[0].style.transform = "translate(0px, -5px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)";
   }
 }
 
@@ -168,9 +212,9 @@ function resetConfigCard(configCard) {
 }
 
 function addCardsInDeck(deck, configCard) {
-  var numberCards = configCard.querySelector(".number-of-cards").value;
-  var suit = configCard.querySelector(".suit").textContent;
-  var cardInSuit = configCard.querySelector(".card-in-suit").textContent;
+  var numberCards = configCard.numberCards,
+      suit = configCard.suit,
+      cardInSuit = configCard.cardInSuit;
   var CIS;
 
   if (isNaN(parseInt(cardInSuit))) {
@@ -189,3 +233,66 @@ function addCardsInDeck(deck, configCard) {
   ordenDeck(deck);
   checkStatusConfig();
 }
+
+function uploadConfigurationFile(_x) {
+  return _uploadConfigurationFile.apply(this, arguments);
+}
+
+function _uploadConfigurationFile() {
+  _uploadConfigurationFile = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(dataText) {
+    var data, configuration, i, deck, j, card, numberCards, cardInSuit, suit;
+    return regeneratorRuntime.wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            data = dataText.replace(/ /g, "");
+            data = data.replace(/\r?\n|\r/g, " ");
+            data = data.toUpperCase();
+            configuration = data.split("DECK");
+            configuration = configuration.filter(function (deck) {
+              return deck;
+            });
+
+            for (i = 0; i < 3; i++) {
+              configuration[i] = configuration[i].trim();
+              deck = configuration[i].split(' ');
+
+              for (j = 0; j < deck.length; j++) {
+                card = deck[j].split(',');
+                numberCards = card[0];
+                cardInSuit = card[1];
+                suit = card[2];
+                addCardsInDeck(document.querySelector(".deck".concat(i + 1)), {
+                  numberCards: numberCards,
+                  suit: suit,
+                  cardInSuit: cardInSuit
+                });
+              }
+            }
+
+          case 6:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+  return _uploadConfigurationFile.apply(this, arguments);
+}
+
+document.querySelector('.btn-upload').addEventListener('click', function () {
+  var inputFile = document.querySelector('#fileConfiguration');
+  inputFile.click();
+  inputFile.addEventListener('change', function (e) {
+    var event = e;
+    var file = inputFile.files[0];
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      var dataText = e.target.result;
+      uploadConfigurationFile(dataText);
+    };
+
+    reader.readAsText(file);
+  });
+});

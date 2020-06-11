@@ -20,7 +20,12 @@ addButtons.forEach(button =>{
 				const numberDeck = button.parentNode.classList[1].slice(-1)
 				const deck = document.querySelector(`.deck${numberDeck}`)
 				const configCard = confirmButton.parentNode.parentNode
-				addCardsInDeck(deck, configCard)
+
+				const numberCards = configCard.querySelector(`.number-of-cards`).value
+				const suit = configCard.querySelector(`.suit`).textContent
+				const cardInSuit = configCard.querySelector(`.card-in-suit`).textContent
+
+				addCardsInDeck(deck, {numberCards, suit, cardInSuit})
 
 				button.style.display = 'block'
 				checkbox.checked = false
@@ -73,6 +78,7 @@ startGameButton.addEventListener('click', ()=>{
 		document.querySelector('.game-area').classList.remove('mode-config')
 		ordenDecks()
 		document.querySelector('.config').style.display = 'none'
+		document.body.style.minHeight = "65em"
 	}
 }) 
 
@@ -80,33 +86,67 @@ const cardsContainers = document.querySelectorAll('.deck')
 const decksDiscarded = document.querySelectorAll('.deckDiscarded')
 let animationRunning = false
 
+
 cardsContainers.forEach(cardsContainer =>{
 	cardsContainer.addEventListener('click', ()=>{
 		if(!animationRunning && cardsContainer.childElementCount > 0){
 			animationRunning = true
-			const cardsCount = cardsContainer.childElementCount - 1
-			
-			const cardNumber = Math.round(Math.random() * cardsCount)
+			const cardsCount = cardsContainer.querySelectorAll('.card').length - 1
+			const cardNumber = getRandomIntInclusive(0, cardsCount)
 			const cardRandom = cardsContainer.querySelectorAll('.card')[cardNumber]
+
 			const cardForAnimation = cardsContainer.querySelectorAll('.card')[cardsCount]
 			const cardForAnimationContent = cardForAnimation.innerHTML
 			const cardRandomContent = cardRandom.innerHTML
 
-			cardForAnimation.innerHTML = cardRandomContent
 			cardRandom.innerHTML = cardForAnimationContent
+			cardForAnimation.innerHTML = cardRandomContent
+			
+			const deckNumber = cardsContainer.classList[1].slice(-1)
+			const deckDiscarded = document.querySelector(`.deckDiscarded${deckNumber}`)
+			
+			cardForAnimation.style.zIndex = "100"			
 
-			cardForAnimation.classList.add('see')
+
+			let space = 0
+
+			if(deckDiscarded.childElementCount > 0){
+				space = getSpace(deckDiscarded.querySelectorAll('.card')[deckDiscarded.childElementCount - 1].style.transform)
+			}
+
+			cardForAnimation.style.transition = "all 1s ease"			
+			cardForAnimation.style.transform = `rotateX(0deg) rotateY(0deg) rotateZ(0deg)`
+			cardForAnimation.style.top = `calc(-100% - ${space}px)`
+			
 			setTimeout(()=>{
-				const deckNumber = cardsContainer.classList[1].slice(-1)
-				const deckDiscarded = document.querySelector(`.deckDiscarded${deckNumber}`)
-				deckDiscarded.appendChild(cardForAnimation)
-				ordenDecksDiscarded(cardForAnimation)
-				animationRunning = false
-			},3000)
+				cardForAnimation.style.top = `calc(-100% - ${space}px)`
+					setTimeout(()=>{
+					cardForAnimation.style.transform = `rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
+					
+					setTimeout(()=>{
+						deckDiscarded.appendChild(cardForAnimation)
+						ordenDeckDiscarded(deckDiscarded)
+						animationRunning = false
+					},1000)
+				},200)
+			},1000)
+
 		}
 	})
 
 })
+
+function getSpace(cardStyle){
+	const param1 = cardStyle.indexOf('-') + 1
+	const param2 = cardStyle.indexOf(')')
+	return parseInt(cardStyle.slice(param1,param2))
+}
+
+function getRandomIntInclusive(min, max){
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
 function ordenDeck(deck){
 	const cards = deck.querySelectorAll('.card')
@@ -130,16 +170,23 @@ function ordenDecks(){
 	}
 }
 
-function ordenDecksDiscarded(){
-	for(let i=0; i < decksDiscarded.length; i++){
-		const cards = decksDiscarded[i].querySelectorAll('.card')
-		let space = 5;
-		for(let i=0; i<cards.length; i++){
-			cards[i].classList.remove('see')
-			cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
-			cards[i].style.zIndex = i
-			space += 5
-		}
+function ordenDeckDiscarded(deckDiscarded){
+	const cards = deckDiscarded.querySelectorAll('.card')
+	if(deckDiscarded.childElementCount - 2 >= 0){
+		const card = cards[deckDiscarded.childElementCount - 2]
+		const zIndex = card.style.zIndex
+		const space = getSpace(card.style.transform)
+		const position = deckDiscarded.childElementCount - 1
+		cards[position].style.transition = "none"
+		cards[position].style.top = "0"
+		cards[position].style.zIndex = `${parseInt(zIndex)+1}`
+		cards[position].style.transform = `translate(0px, -${space+5}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
+
+	}else{
+		cards[0].style.transition = "none"
+		cards[0].style.top = "0"
+		cards[0].style.zIndex = "0"
+		cards[0].style.transform = `translate(0px, -5px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
 	}
 }
 
@@ -174,9 +221,8 @@ function resetConfigCard(configCard){
 }
 
 function addCardsInDeck(deck, configCard){
-	const numberCards = configCard.querySelector(`.number-of-cards`).value
-	const suit = configCard.querySelector(`.suit`).textContent
-	const cardInSuit = configCard.querySelector(`.card-in-suit`).textContent
+
+	const {numberCards, suit, cardInSuit} = configCard
 
 	let CIS
 	if(isNaN(parseInt(cardInSuit))){
@@ -199,4 +245,44 @@ function addCardsInDeck(deck, configCard){
 	ordenDeck(deck)
 	checkStatusConfig()
 }
+
+
+async function uploadConfigurationFile(dataText){
+	let data = dataText.replace(/ /g, "")
+	data = data.replace(/\r?\n|\r/g, " ")
+	data = data.toUpperCase()
+
+	let configuration = data.split("DECK")
+	configuration = configuration.filter(deck => deck)
+
+	for(let i = 0; i < 3; i++){
+		configuration[i] = configuration[i].trim()
+		const deck = configuration[i].split(' ')
+		for(let j=0; j<deck.length; j++){
+			const card = deck[j].split(',')
+			const numberCards = card[0]
+			const cardInSuit = card[1]
+			const suit = card[2]
+			addCardsInDeck(document.querySelector(`.deck${i+1}`), {numberCards, suit, cardInSuit})
+		}
+
+	}
+}
+
+document.querySelector('.btn-upload').addEventListener('click', ()=>{
+	const inputFile = document.querySelector('#fileConfiguration')
+	inputFile.click()
+	inputFile.addEventListener('change', (e)=>{
+		const event =e
+		const file = inputFile.files[0]
+
+		const reader = new FileReader()
+
+		reader.onload = (e) =>{
+			const dataText = e.target.result
+			uploadConfigurationFile(dataText)
+		}
+		reader.readAsText(file)
+	})
+})
 

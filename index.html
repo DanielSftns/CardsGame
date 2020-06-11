@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" href="./output/styles.min.css">
@@ -10,7 +10,8 @@
 </head>
 <body>
 	<div class="config">
-		<h2 class="config-title">Configure your decks</h2>
+		<input type="file" hidden id="fileConfiguration">
+		<h2 class="config-title">Configure your decks or <span class="btn-upload">Upload Configuration File <i class="fas fa-file-upload"></i></span></h2>
 		<div class="config-deck config-deck1">
 			
 			<button class="add-button">
@@ -221,14 +222,13 @@
 		<div class="deckDiscarded deckDiscarded3"></div>
 
 		<div class="deck deck1"></div>
-		
 		<div class="deck deck2"></div>
-		
 		<div class="deck deck3"></div>
 	</div>
 
 
 	<script src="./output/app.min.js"></script>
 	<!-- <script src="js/app.js"></script> -->
+
 </body>
 </html>

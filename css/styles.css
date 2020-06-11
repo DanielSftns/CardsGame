@@ -7,6 +7,7 @@
 body{
 	background: rgba(0,0,0,.05);
 	min-height: 100vh;
+	/*min-height: 65em;*/
 	position: relative;
 	display: flex;
 	align-items: center;
@@ -35,7 +36,21 @@ body{
 	position: absolute;
 	left: 2em;
 	top: 1em;
-	font-size: 2em;
+	font-size: 1.8em;
+	color: rgba(0,0,0,.7);
+}
+
+.btn-upload{
+	display: inline-block;
+	/*padding: 1em 0;*/
+	border-radius: 2em;
+	text-decoration: underline;
+	/*border: 1px solid;*/
+}
+
+.btn-upload:hover{
+	color: rgba(0,0,0,1);
+	cursor: pointer;
 }
 
 .config .config-deck{
@@ -47,8 +62,8 @@ body{
 	border: none;
 	outline: none;
 	font-size: 2.5em;
-	color: green;
 	color: #3e6196;
+	background-color: transparent;	
 }
 .config .config-deck .add-button:hover{
 	cursor: pointer;
@@ -289,28 +304,6 @@ img{
 	max-height: 100%;
 	object-fit: cover;
 	border-radius: 1em;
-}
-
-.card.see{
-	animation: seeCard 3s ease forwards;
-}
-
-@keyframes seeCard{
-	0%{
-		top: calc(50% - 10.7em);
-		z-index: 100;
-	}
-	30%{
-		transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-	}
-	70%{
-		transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg);
-	}
-	100%{
-		transform: rotateX(-70deg) rotateY(0deg) rotateZ(10deg);
-		top: -100%;
-		z-index: 100;
-	}
 }
 
 .deckDiscarded,
