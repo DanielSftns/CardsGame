@@ -154,7 +154,9 @@ function ordenDeck(deck){
 	for(let i=0; i<cards.length; i++){
 		cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
 		cards[i].style.zIndex = i;
-		space += 5
+		if(i + 1 < 40){
+			space += 5
+		}
 	}
 }
 
@@ -165,7 +167,9 @@ function ordenDecks(){
 		for(let i=0; i<cards.length; i++){
 			cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)`
 			cards[i].style.zIndex = i;
-			space += 5
+			if(i + 1 < 40){
+				space += 5
+			}
 		}
 	}
 }
@@ -175,7 +179,9 @@ function ordenDeckDiscarded(deckDiscarded){
 	if(deckDiscarded.childElementCount - 2 >= 0){
 		const card = cards[deckDiscarded.childElementCount - 2]
 		const zIndex = card.style.zIndex
-		const space = getSpace(card.style.transform)
+		let space = getSpace(card.style.transform)
+		space = space < (40*5)? space : ((40*5) - 5)
+
 		const position = deckDiscarded.childElementCount - 1
 		cards[position].style.transition = "none"
 		cards[position].style.top = "0"
@@ -255,17 +261,21 @@ async function uploadConfigurationFile(dataText){
 	let configuration = data.split("DECK")
 	configuration = configuration.filter(deck => deck)
 
-	for(let i = 0; i < 3; i++){
-		configuration[i] = configuration[i].trim()
-		const deck = configuration[i].split(' ')
-		for(let j=0; j<deck.length; j++){
-			const card = deck[j].split(',')
-			const numberCards = card[0]
-			const cardInSuit = card[1]
-			const suit = card[2]
-			addCardsInDeck(document.querySelector(`.deck${i+1}`), {numberCards, suit, cardInSuit})
-		}
 
+	for(let i = 0; i < configuration.length; i++){
+		configuration[i] = configuration[i].trim()
+		if(configuration[i] != ''){
+			const deck = configuration[i].split(' ')
+			for(let j=0; j<deck.length; j++){
+
+				const card = deck[j].split(',')
+				const numberCards = card.length == 3? card[0] : 1
+				const cardInSuit = card.length == 3? card[1] : card[0]
+				const suit = card.length == 3? card[2] : card[1]
+				
+				addCardsInDeck(document.querySelector(`.deck${i+1}`), {numberCards, suit, cardInSuit})
+			}
+		}
 	}
 }
 

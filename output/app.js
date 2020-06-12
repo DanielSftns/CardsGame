@@ -142,7 +142,10 @@ function ordenDeck(deck) {
   for (var i = 0; i < cards.length; i++) {
     cards[i].style.transform = "translate(0px, -".concat(space, "px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)");
     cards[i].style.zIndex = i;
-    space += 5;
+
+    if (i + 1 < 40) {
+      space += 5;
+    }
   }
 }
 
@@ -154,7 +157,10 @@ function ordenDecks() {
     for (var _i = 0; _i < cards.length; _i++) {
       cards[_i].style.transform = "translate(0px, -".concat(space, "px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)");
       cards[_i].style.zIndex = _i;
-      space += 5;
+
+      if (_i + 1 < 40) {
+        space += 5;
+      }
     }
   }
 }
@@ -166,6 +172,7 @@ function ordenDeckDiscarded(deckDiscarded) {
     var card = cards[deckDiscarded.childElementCount - 2];
     var zIndex = card.style.zIndex;
     var space = getSpace(card.style.transform);
+    space = space < 40 * 5 ? space : 40 * 5 - 5;
     var position = deckDiscarded.childElementCount - 1;
     cards[position].style.transition = "none";
     cards[position].style.top = "0";
@@ -253,20 +260,23 @@ function _uploadConfigurationFile() {
               return deck;
             });
 
-            for (i = 0; i < 3; i++) {
+            for (i = 0; i < configuration.length; i++) {
               configuration[i] = configuration[i].trim();
-              deck = configuration[i].split(' ');
 
-              for (j = 0; j < deck.length; j++) {
-                card = deck[j].split(',');
-                numberCards = card[0];
-                cardInSuit = card[1];
-                suit = card[2];
-                addCardsInDeck(document.querySelector(".deck".concat(i + 1)), {
-                  numberCards: numberCards,
-                  suit: suit,
-                  cardInSuit: cardInSuit
-                });
+              if (configuration[i] != '') {
+                deck = configuration[i].split(' ');
+
+                for (j = 0; j < deck.length; j++) {
+                  card = deck[j].split(',');
+                  numberCards = card.length == 3 ? card[0] : 1;
+                  cardInSuit = card.length == 3 ? card[1] : card[0];
+                  suit = card.length == 3 ? card[2] : card[1];
+                  addCardsInDeck(document.querySelector(".deck".concat(i + 1)), {
+                    numberCards: numberCards,
+                    suit: suit,
+                    cardInSuit: cardInSuit
+                  });
+                }
               }
             }
 
