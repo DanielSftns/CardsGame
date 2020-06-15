@@ -1,4 +1,23 @@
+document.querySelector('.button.play').addEventListener('click', ()=>{
+	playDefaultGame()
+})
+
+document.querySelector('.button.settings').addEventListener('click', ()=>{
+	document.querySelector('.home').style.display = "none"
+	document.querySelector('.settings-view').style.display = "block"
+})
+
+document.querySelector('.button.graphics').addEventListener('click', ()=>{
+	document.querySelector('.settings-view').style.display = "none"
+	document.querySelector('.config').style.display = "grid"
+	document.querySelector('.game-area').style.display = "grid"
+})
+
+const cardsContainers = document.querySelectorAll('.deck') 
+const decksDiscarded = document.querySelectorAll('.deckDiscarded')
 const startGameButton = document.querySelector('.start-game')
+let animationRunning = false
+let gameFinished = false
 
 const addButtons = document.querySelectorAll('.add-button')
 addButtons.forEach(button =>{
@@ -26,6 +45,8 @@ addButtons.forEach(button =>{
 				const cardInSuit = configCard.querySelector(`.card-in-suit`).textContent
 
 				addCardsInDeck(deck, {numberCards, suit, cardInSuit})
+				ordenDeck(deck)
+				checkStatusConfig()
 
 				button.style.display = 'block'
 				checkbox.checked = false
@@ -79,17 +100,14 @@ startGameButton.addEventListener('click', ()=>{
 		ordenDecks()
 		document.querySelector('.config').style.display = 'none'
 		document.body.style.minHeight = "65em"
+		window.scrollTo(0, (document.querySelectorAll('.deck')[0].offsetTop / 2))
 	}
 }) 
 
-const cardsContainers = document.querySelectorAll('.deck') 
-const decksDiscarded = document.querySelectorAll('.deckDiscarded')
-let animationRunning = false
-
 
 cardsContainers.forEach(cardsContainer =>{
-	cardsContainer.addEventListener('click', ()=>{
-		if(!animationRunning && cardsContainer.childElementCount > 0){
+	cardsContainer.addEventListener('click', (e)=>{
+		if(!animationRunning && cardsContainer.childElementCount > 1 && !e.target.classList.contains('select-button') && !gameFinished){
 			animationRunning = true
 			const cardsCount = cardsContainer.querySelectorAll('.card').length - 1
 			const cardNumber = getRandomIntInclusive(0, cardsCount)
@@ -114,12 +132,12 @@ cardsContainers.forEach(cardsContainer =>{
 				space = getSpace(deckDiscarded.querySelectorAll('.card')[deckDiscarded.childElementCount - 1].style.transform)
 			}
 
-			cardForAnimation.style.transition = "all 1s ease"			
+			cardForAnimation.style.transition = "all 0.6s ease"			
 			cardForAnimation.style.transform = `rotateX(0deg) rotateY(0deg) rotateZ(0deg)`
 			cardForAnimation.style.top = `calc(-100% - ${space}px)`
 			
 			setTimeout(()=>{
-				cardForAnimation.style.top = `calc(-100% - ${space}px)`
+				// cardForAnimation.style.top = `calc(-100% - ${space}px)`
 					setTimeout(()=>{
 					cardForAnimation.style.transform = `rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
 					
@@ -127,9 +145,22 @@ cardsContainers.forEach(cardsContainer =>{
 						deckDiscarded.appendChild(cardForAnimation)
 						ordenDeckDiscarded(deckDiscarded)
 						animationRunning = false
-					},1000)
+					},600)
 				},200)
-			},1000)
+			},600)
+
+		}else if(e.target.classList.contains('select-button')){
+
+			if(document.querySelectorAll('.select-button.selected').length == 0){
+				e.target.textContent = "Selected"
+				e.target.classList.add('selected')
+				gameFinished = true 
+
+			}else if(e.target.classList.contains('selected')){
+				e.target.textContent = "Select"
+				e.target.classList.remove('selected')
+				gameFinished = false
+			}
 
 		}
 	})
@@ -154,7 +185,7 @@ function ordenDeck(deck){
 	for(let i=0; i<cards.length; i++){
 		cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
 		cards[i].style.zIndex = i;
-		if(i + 1 < 40){
+		if(i + 1 < 30){
 			space += 5
 		}
 	}
@@ -167,7 +198,7 @@ function ordenDecks(){
 		for(let i=0; i<cards.length; i++){
 			cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)`
 			cards[i].style.zIndex = i;
-			if(i + 1 < 40){
+			if(i + 1 < 30){
 				space += 5
 			}
 		}
@@ -180,7 +211,7 @@ function ordenDeckDiscarded(deckDiscarded){
 		const card = cards[deckDiscarded.childElementCount - 2]
 		const zIndex = card.style.zIndex
 		let space = getSpace(card.style.transform)
-		space = space < (40*5)? space : ((40*5) - 5)
+		space = space < (30*5)? space : ((30*5) - 5)
 
 		const position = deckDiscarded.childElementCount - 1
 		cards[position].style.transition = "none"
@@ -213,7 +244,7 @@ function checkStatusConfig(){
 	const deck1 = document.querySelector('.deck1')
 	const deck2 = document.querySelector('.deck2')
 	const deck3 = document.querySelector('.deck3')
-	if(deck1.childElementCount == 0 || deck2.childElementCount == 0 || deck3.childElementCount == 0){
+	if(deck1.childElementCount == 1 || deck2.childElementCount == 1 || deck3.childElementCount == 1){
 		startGameButton.classList.remove('active')
 	}else{
 		startGameButton.classList.add('active')
@@ -248,8 +279,8 @@ function addCardsInDeck(deck, configCard){
 		`
 		deck.appendChild(card)
 	}
-	ordenDeck(deck)
-	checkStatusConfig()
+	// ordenDeck(deck)
+	// checkStatusConfig()
 }
 
 
@@ -277,9 +308,16 @@ async function uploadConfigurationFile(dataText){
 			}
 		}
 	}
+
+	setTimeout(()=>{
+		document.querySelector('.settings-view').style.display = "none"
+		document.querySelector('.game-area').style.display = "grid"
+		startGameButton.classList.add('active')
+		startGameButton.click()
+	},2000)
 }
 
-document.querySelector('.btn-upload').addEventListener('click', ()=>{
+document.querySelector('.button.file').addEventListener('click', ()=>{
 	const inputFile = document.querySelector('#fileConfiguration')
 	inputFile.click()
 	inputFile.addEventListener('change', (e)=>{
@@ -296,3 +334,9 @@ document.querySelector('.btn-upload').addEventListener('click', ()=>{
 	})
 })
 
+async function playDefaultGame(){
+	const res = await fetch('./configuration.txt')
+	const dataText = await res.text()
+	document.querySelector('.home').style.display = "none"
+	uploadConfigurationFile(dataText)
+}
