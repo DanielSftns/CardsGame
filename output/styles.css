@@ -5,14 +5,56 @@
 }
 
 body{
-	background: rgba(0,0,0,.05);
+	background: #efefef;
 	min-height: 100vh;
-	/*min-height: 65em;*/
 	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	font-family: 'Poppins', sans-serif;
+}
+
+.home,
+.settings-view{
+	background-color: #efefef;
+	width: 100%;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: 100;
+}
+
+.button{
+	display: block;
+	width: 15em;
+	padding: 1em 2em;
+	margin-bottom: .5em;
+	border-radius: 2em;
+	font-weight: 700;
+	font-size: 1.25em;
+	border: none;
+	outline: none;
+	background-color: #3e6196;
+	color: rgba(255,255,255,.9);
+}
+
+.button:hover{
+	cursor: pointer;
+	background-color: #406db1;
+	color: white;
+	transform: scale(.99);
+	box-shadow: 0 0 0 2px #3e6196;
+}
+
+.settings-view .title{
+	font-size: 1.25em;
+	text-align: center;
+	margin-bottom: 1em;
+	color: rgba(0,0,0,.8);
 }
 
 .config,
@@ -278,6 +320,7 @@ body{
 	opacity: 1;
 	-ms-grid-rows: 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
+	/*grid-row-gap: 2em;*/
 }
 
 .deck{
@@ -286,6 +329,44 @@ body{
 	-ms-grid-row-align: center; 
 	    align-self: center;
 	position: relative;
+}
+
+.game-area.mode-config .select-button{
+	display: none;
+}
+
+.deck .select-button{
+	width: 6em;
+	height: 6em;
+	border-radius: 50%;
+	font-weight: 700;
+	font-size: 1.25em;
+	border: none;
+	outline: none;
+	position: absolute;
+	left: calc(50% - 3em);
+	bottom: -1em;
+	background-color: hsl(120, 57%, 40%);
+	color: rgba(255,255,255,.9);
+	box-shadow: inset 0 0 20px 0 rgba(0,0,0,.4),
+				inset 0 0 0 5px rgba(0,0,0,.3);
+}
+
+.deck .select-button:active{
+	transform: scale(.95);
+}
+
+.deck .select-button:hover{
+	cursor: pointer;
+	color: white;
+	background-color: hsl(120, 57%, 45%);
+}
+
+.deck .select-button.selected{
+	background-color: hsl(0, 75%, 48%);
+}
+.deck .select-button.selected:hover{
+	background-color: hsl(1, 88%, 48%);
 }
 
 .deck .card{
@@ -359,4 +440,9 @@ img{
 	-ms-grid-row-align: center; 
 	    align-self: center;
 	position: relative;
+}
+
+.game-area.mode-config .deckDiscarded,
+.game-area.mode-config .deck{
+	height: unset;
 }

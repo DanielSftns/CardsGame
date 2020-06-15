@@ -1,10 +1,21 @@
+const cardsContainers = document.querySelectorAll('.deck')
+const allCheckbox = document.querySelectorAll('.select-checkbox') 
+const inputsNumber = document.querySelectorAll('.number-of-cards')
+const selects = document.querySelectorAll('.select')
+const options = document.querySelectorAll('.option')
+const addButtons = document.querySelectorAll('.add-button')
+const startGameButton = document.querySelector('.start-game')
+const decksDiscarded = document.querySelectorAll('.deckDiscarded')
+let animationRunning = false
+let gameFinished = false
+
 document.querySelector('.button.play').addEventListener('click', ()=>{
 	playDefaultGame()
 })
 
 document.querySelector('.button.settings').addEventListener('click', ()=>{
 	document.querySelector('.home').style.display = "none"
-	document.querySelector('.settings-view').style.display = "block"
+	document.querySelector('.settings-view').style.display = "flex"
 })
 
 document.querySelector('.button.graphics').addEventListener('click', ()=>{
@@ -13,13 +24,24 @@ document.querySelector('.button.graphics').addEventListener('click', ()=>{
 	document.querySelector('.game-area').style.display = "grid"
 })
 
-const cardsContainers = document.querySelectorAll('.deck') 
-const decksDiscarded = document.querySelectorAll('.deckDiscarded')
-const startGameButton = document.querySelector('.start-game')
-let animationRunning = false
-let gameFinished = false
+document.querySelector('.button.file').addEventListener('click', ()=>{
+	const inputFile = document.querySelector('#fileConfiguration')
+	inputFile.click()
+	inputFile.addEventListener('change', (e)=>{
+		const event =e
+		const file = inputFile.files[0]
 
-const addButtons = document.querySelectorAll('.add-button')
+		const reader = new FileReader()
+
+		reader.onload = (e) =>{
+			const dataText = e.target.result
+			uploadConfigurationFile(dataText)
+		}
+		reader.readAsText(file)
+	})
+})
+
+
 addButtons.forEach(button =>{
 	button.addEventListener('click', ()=>{
 		button.style.display = 'none'
@@ -58,8 +80,6 @@ addButtons.forEach(button =>{
 })
 
 
-const allCheckbox = document.querySelectorAll('.select-checkbox') 
-const selects = document.querySelectorAll('.select')
 selects.forEach(select =>{
 	select.addEventListener('click',(e)=>{
 		allCheckbox.forEach(checkbox =>{
@@ -72,7 +92,6 @@ selects.forEach(select =>{
 	})
 })
 
-const options = document.querySelectorAll('.option')
 options.forEach(option => {
 	option.addEventListener('click', (e)=>{
 		const value = e.target.textContent
@@ -82,7 +101,6 @@ options.forEach(option => {
 	})
 })
 
-const inputsNumber = document.querySelectorAll('.number-of-cards')
 inputsNumber.forEach(input =>{
 	input.addEventListener('keyup',(e)=>{
 		const value = e.target.value
@@ -99,7 +117,7 @@ startGameButton.addEventListener('click', ()=>{
 		document.querySelector('.game-area').classList.remove('mode-config')
 		ordenDecks()
 		document.querySelector('.config').style.display = 'none'
-		document.body.style.minHeight = "65em"
+		document.body.style.fontSize = "13px"
 		window.scrollTo(0, (document.querySelectorAll('.deck')[0].offsetTop / 2))
 	}
 }) 
@@ -137,17 +155,14 @@ cardsContainers.forEach(cardsContainer =>{
 			cardForAnimation.style.top = `calc(-100% - ${space}px)`
 			
 			setTimeout(()=>{
-				// cardForAnimation.style.top = `calc(-100% - ${space}px)`
-					setTimeout(()=>{
-					cardForAnimation.style.transform = `rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
-					
-					setTimeout(()=>{
-						deckDiscarded.appendChild(cardForAnimation)
-						ordenDeckDiscarded(deckDiscarded)
-						animationRunning = false
-					},600)
-				},200)
-			},600)
+				cardForAnimation.style.transform = `rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
+				
+				setTimeout(()=>{
+					deckDiscarded.appendChild(cardForAnimation)
+					ordenDeckDiscarded(deckDiscarded)
+					animationRunning = false
+				},600)
+			},800)
 
 		}else if(e.target.classList.contains('select-button')){
 
@@ -185,9 +200,7 @@ function ordenDeck(deck){
 	for(let i=0; i<cards.length; i++){
 		cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
 		cards[i].style.zIndex = i;
-		if(i + 1 < 30){
-			space += 5
-		}
+		space += 5
 	}
 }
 
@@ -198,7 +211,8 @@ function ordenDecks(){
 		for(let i=0; i<cards.length; i++){
 			cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)`
 			cards[i].style.zIndex = i;
-			if(i + 1 < 30){
+
+			if(i % 2 == 0){
 				space += 5
 			}
 		}
@@ -211,13 +225,14 @@ function ordenDeckDiscarded(deckDiscarded){
 		const card = cards[deckDiscarded.childElementCount - 2]
 		const zIndex = card.style.zIndex
 		let space = getSpace(card.style.transform)
-		space = space < (30*5)? space : ((30*5) - 5)
+
+		space = (deckDiscarded.childElementCount % 2 == 0)? space + 5 : space
 
 		const position = deckDiscarded.childElementCount - 1
 		cards[position].style.transition = "none"
 		cards[position].style.top = "0"
 		cards[position].style.zIndex = `${parseInt(zIndex)+1}`
-		cards[position].style.transform = `translate(0px, -${space+5}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
+		cards[position].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
 
 	}else{
 		cards[0].style.transition = "none"
@@ -279,12 +294,10 @@ function addCardsInDeck(deck, configCard){
 		`
 		deck.appendChild(card)
 	}
-	// ordenDeck(deck)
-	// checkStatusConfig()
 }
 
 
-async function uploadConfigurationFile(dataText){
+function uploadConfigurationFile(dataText){
 	let data = dataText.replace(/ /g, "")
 	data = data.replace(/\r?\n|\r/g, " ")
 	data = data.toUpperCase()
@@ -309,34 +322,16 @@ async function uploadConfigurationFile(dataText){
 		}
 	}
 
-	setTimeout(()=>{
-		document.querySelector('.settings-view').style.display = "none"
-		document.querySelector('.game-area').style.display = "grid"
-		startGameButton.classList.add('active')
-		startGameButton.click()
-	},2000)
+	document.querySelector('.settings-view').style.display = "none"
+	document.querySelector('.home').style.display = "none"
+	document.querySelector('.game-area').style.display = "grid"
+	
+	startGameButton.classList.add('active')
+	startGameButton.click()
 }
-
-document.querySelector('.button.file').addEventListener('click', ()=>{
-	const inputFile = document.querySelector('#fileConfiguration')
-	inputFile.click()
-	inputFile.addEventListener('change', (e)=>{
-		const event =e
-		const file = inputFile.files[0]
-
-		const reader = new FileReader()
-
-		reader.onload = (e) =>{
-			const dataText = e.target.result
-			uploadConfigurationFile(dataText)
-		}
-		reader.readAsText(file)
-	})
-})
 
 async function playDefaultGame(){
 	const res = await fetch('./configuration.txt')
 	const dataText = await res.text()
-	document.querySelector('.home').style.display = "none"
 	uploadConfigurationFile(dataText)
 }
