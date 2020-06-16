@@ -145,6 +145,7 @@ cardsContainers.forEach(cardsContainer =>{
 
 			cardForAnimation.style.transition = "all 0.6s ease"	
 
+			cardForAnimation.style.webkitTransform = `rotateY(0deg)`
 			cardForAnimation.style.transform = `rotateY(0deg)`
 			
 			setTimeout(()=>{
@@ -185,6 +186,7 @@ function ordenDeck(deck){
 	for(let i=0; i<cards.length; i++){
 			const translateX = Math.random() * 15
 			const translateY = Math.random() * 15
+			cards[i].style.webkitTransform = `translate(${translateX}px, ${translateY}px) rotateY(0deg)`
 			cards[i].style.transform = `translate(${translateX}px, ${translateY}px) rotateY(0deg)`
 	}
 }
@@ -195,6 +197,8 @@ function ordenDecks(){
 		for(let i=0; i<cards.length; i++){
 			const translateX = Math.random() * 15
 			const translateY = Math.random() * 15
+
+			cards[i].style.webkitTransform = `translate(${translateX}px, ${translateY}px) rotateY(180deg)`
 			cards[i].style.transform = `translate(${translateX}px, ${translateY}px) rotateY(180deg)`
 		}
 	}
@@ -209,6 +213,7 @@ function ordenDeckDiscarded(deckDiscarded){
 
 		const position = deckDiscarded.childElementCount - 1
 		cards[position].style.transition = "none"
+		cards[position].style.webkitTransform = "translate3d(0,0,0)"		
 		cards[position].style.transform = "translate3d(0,0,0)"		
 		cards[position].style.zIndex = `${position}`
 		cards[position].style.position = "absolute"
@@ -219,6 +224,7 @@ function ordenDeckDiscarded(deckDiscarded){
 
 	}else{
 		cards[0].style.transition = "none"
+		cards[0].style.webkitTransform = "translate3d(0,0,0)"
 		cards[0].style.transform = "translate3d(0,0,0)"
 		cards[0].style.zIndex = "0"
 		cards[0].style.position = "absolute"
