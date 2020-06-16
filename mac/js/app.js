@@ -141,22 +141,14 @@ cardsContainers.forEach(cardsContainer =>{
 			const deckNumber = cardsContainer.classList[1].slice(-1)
 			const deckDiscarded = document.querySelector(`.deckDiscarded${deckNumber}`)
 			
-			cardForAnimation.style.zIndex = "100"			
+			cardForAnimation.style.zIndex = "100"
 
+			cardForAnimation.style.transition = "all 0.6s ease"	
 
-			let space = 0
-
-			if(deckDiscarded.childElementCount > 0){
-				space = getSpace(deckDiscarded.querySelectorAll('.card')[deckDiscarded.childElementCount - 1].style.transform)
-			}
-
-			cardForAnimation.style.transition = "all 0.6s ease"			
-			cardForAnimation.style.transform = `rotateX(0deg) rotateY(0deg) rotateZ(0deg)`
-			cardForAnimation.style.top = `calc(-100% - ${space}px)`
+			cardForAnimation.style.transform = `rotateY(0deg)`
 			
 			setTimeout(()=>{
-				cardForAnimation.style.transform = `rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
-				
+				cardForAnimation.style.top = `calc(-100% - 2em)`
 				setTimeout(()=>{
 					deckDiscarded.appendChild(cardForAnimation)
 					ordenDeckDiscarded(deckDiscarded)
@@ -182,12 +174,6 @@ cardsContainers.forEach(cardsContainer =>{
 
 })
 
-function getSpace(cardStyle){
-	const param1 = cardStyle.indexOf('-') + 1
-	const param2 = cardStyle.indexOf(')')
-	return parseInt(cardStyle.slice(param1,param2))
-}
-
 function getRandomIntInclusive(min, max){
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -196,62 +182,51 @@ function getRandomIntInclusive(min, max){
 
 function ordenDeck(deck){
 	const cards = deck.querySelectorAll('.card')
-	let space = 5;
 	for(let i=0; i<cards.length; i++){
-		cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
-		// cards[i].style.zIndex = i;
-		space += 5
+			const translateX = Math.random() * 15
+			const translateY = Math.random() * 15
+			cards[i].style.transform = `translate(${translateX}px, ${translateY}px) rotateY(0deg)`
 	}
 }
 
 function ordenDecks(){
 	for(let i=0; i < cardsContainers.length; i++){
 		const cards = cardsContainers[i].querySelectorAll('.card')
-		let space = 5;
-		// for(let i=0; i<cards.length; i++){
-		// 	cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)`
-		// 	// cards[i].style.zIndex = i;
-
-		// 	if(i % 2 == 0){
-		// 		space += 5
-		// 	}
-		// }
-		for(let i = cards.length - 1; i >= 0 ; i--){
-			cards[i].style.transform = `translate3d(0,0,${cards.length - i}px) translate(0px, -${space}px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)`
-			// cards[i].style.zIndex = i;
-
-			if(i % 2 == 0){
-				space += 5
-			}
+		for(let i=0; i<cards.length; i++){
+			const translateX = Math.random() * 15
+			const translateY = Math.random() * 15
+			cards[i].style.transform = `translate(${translateX}px, ${translateY}px) rotateY(180deg)`
 		}
-		// const styles = new Array(cards.length)
-		// for(let i=0; i<cards.length; i++){
-
-		// }
-		// debugger
 	}
 }
 
 function ordenDeckDiscarded(deckDiscarded){
 	const cards = deckDiscarded.querySelectorAll('.card')
+
+
 	if(deckDiscarded.childElementCount - 2 >= 0){
 		const card = cards[deckDiscarded.childElementCount - 2]
-		const zIndex = card.style.zIndex
-		let space = getSpace(card.style.transform)
-
-		space = (deckDiscarded.childElementCount % 2 == 0)? space + 5 : space
 
 		const position = deckDiscarded.childElementCount - 1
 		cards[position].style.transition = "none"
-		cards[position].style.top = "0"
-		cards[position].style.zIndex = `${parseInt(zIndex)+1}`
-		cards[position].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
+		cards[position].style.transform = "translate3d(0,0,0)"		
+		cards[position].style.zIndex = `${position}`
+		cards[position].style.position = "absolute"
+		const translateX = Math.random() * 10
+		const translateY = Math.random() * 10
+		cards[position].style.lef = `${translateX}px`
+		cards[position].style.top = `${translateY}px`
 
 	}else{
 		cards[0].style.transition = "none"
-		cards[0].style.top = "0"
+		cards[0].style.transform = "translate3d(0,0,0)"
 		cards[0].style.zIndex = "0"
-		cards[0].style.transform = `translate(0px, -5px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)`
+		cards[0].style.position = "absolute"
+		const translateX = Math.random() * 10
+		const translateY = Math.random() * 10
+		cards[0].style.left = `${translateX}px`
+		cards[0].style.top = `${translateY}px`
+
 	}
 }
 
