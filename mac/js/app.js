@@ -217,7 +217,7 @@ function ordenDecks(){
 		// 	}
 		// }
 		for(let i = cards.length - 1; i >= 0 ; i--){
-			cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)`
+			cards[i].style.transform = `translate3d(0,0,${cards.length - i}px) translate(0px, -${space}px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)`
 			// cards[i].style.zIndex = i;
 
 			if(i % 2 == 0){
