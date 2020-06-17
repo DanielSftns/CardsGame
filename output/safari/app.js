@@ -131,17 +131,11 @@ cardsContainers.forEach(function (cardsContainer) {
       var deckNumber = cardsContainer.classList[1].slice(-1);
       var deckDiscarded = document.querySelector(".deckDiscarded".concat(deckNumber));
       cardForAnimation.style.zIndex = "100";
-      var space = 0;
-
-      if (deckDiscarded.childElementCount > 0) {
-        space = getSpace(deckDiscarded.querySelectorAll('.card')[deckDiscarded.childElementCount - 1].style.transform);
-      }
-
       cardForAnimation.style.transition = "all 0.6s ease";
-      cardForAnimation.style.transform = "rotateX(0deg) rotateY(0deg) rotateZ(0deg)";
-      cardForAnimation.style.top = "calc(-100% - ".concat(space, "px)");
+      cardForAnimation.style.webkitTransform = "rotateY(0deg)";
+      cardForAnimation.style.transform = "rotateY(0deg)";
       setTimeout(function () {
-        cardForAnimation.style.transform = "rotateX(-70deg) rotateY(0deg) rotateZ(10deg)";
+        cardForAnimation.style.top = "calc(-100% - 2em)";
         setTimeout(function () {
           deckDiscarded.appendChild(cardForAnimation);
           ordenDeckDiscarded(deckDiscarded);
@@ -162,12 +156,6 @@ cardsContainers.forEach(function (cardsContainer) {
   });
 });
 
-function getSpace(cardStyle) {
-  var param1 = cardStyle.indexOf('-') + 1;
-  var param2 = cardStyle.indexOf(')');
-  return parseInt(cardStyle.slice(param1, param2));
-}
-
 function getRandomIntInclusive(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -176,27 +164,24 @@ function getRandomIntInclusive(min, max) {
 
 function ordenDeck(deck) {
   var cards = deck.querySelectorAll('.card');
-  var space = 5;
 
   for (var i = 0; i < cards.length; i++) {
-    cards[i].style.transform = "translate(0px, -".concat(space, "px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)");
-    cards[i].style.zIndex = i;
-    space += 5;
+    var translateX = Math.random() * 15;
+    var translateY = Math.random() * 15;
+    cards[i].style.webkitTransform = "translate(".concat(translateX, "px, ").concat(translateY, "px) rotateY(0deg)");
+    cards[i].style.transform = "translate(".concat(translateX, "px, ").concat(translateY, "px) rotateY(0deg)");
   }
 }
 
 function ordenDecks() {
   for (var i = 0; i < cardsContainers.length; i++) {
     var cards = cardsContainers[i].querySelectorAll('.card');
-    var space = 5;
 
     for (var _i = 0; _i < cards.length; _i++) {
-      cards[_i].style.transform = "translate(0px, -".concat(space, "px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)");
-      cards[_i].style.zIndex = _i;
-
-      if (_i % 2 == 0) {
-        space += 5;
-      }
+      var translateX = Math.random() * 15;
+      var translateY = Math.random() * 15;
+      cards[_i].style.webkitTransform = "translate(".concat(translateX, "px, ").concat(translateY, "px) rotateY(-180deg)");
+      cards[_i].style.transform = "translate(".concat(translateX, "px, ").concat(translateY, "px) rotateY(-180deg)");
     }
   }
 }
@@ -206,19 +191,29 @@ function ordenDeckDiscarded(deckDiscarded) {
 
   if (deckDiscarded.childElementCount - 2 >= 0) {
     var card = cards[deckDiscarded.childElementCount - 2];
-    var zIndex = card.style.zIndex;
-    var space = getSpace(card.style.transform);
-    space = deckDiscarded.childElementCount % 2 == 0 ? space + 5 : space;
     var position = deckDiscarded.childElementCount - 1;
     cards[position].style.transition = "none";
-    cards[position].style.top = "0";
-    cards[position].style.zIndex = "".concat(parseInt(zIndex) + 1);
-    cards[position].style.transform = "translate(0px, -".concat(space, "px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)");
+    cards[position].style.webkitTransform = "translate3d(0,0,0)";
+    cards[position].style.transform = "translate3d(0,0,0)";
+    cards[position].style.zIndex = "".concat(position);
+    cards[position].style.position = "absolute";
+    var translateX = Math.random() * 10;
+    var translateY = Math.random() * 10;
+    cards[position].style.lef = "".concat(translateX, "px");
+    cards[position].style.top = "".concat(translateY, "px");
   } else {
     cards[0].style.transition = "none";
-    cards[0].style.top = "0";
+    cards[0].style.webkitTransform = "translate3d(0,0,0)";
+    cards[0].style.transform = "translate3d(0,0,0)";
     cards[0].style.zIndex = "0";
-    cards[0].style.transform = "translate(0px, -5px) rotateX(-70deg) rotateY(0deg) rotateZ(10deg)";
+    cards[0].style.position = "absolute";
+
+    var _translateX = Math.random() * 10;
+
+    var _translateY = Math.random() * 10;
+
+    cards[0].style.left = "".concat(_translateX, "px");
+    cards[0].style.top = "".concat(_translateY, "px");
   }
 }
 

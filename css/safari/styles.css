@@ -379,7 +379,7 @@ body{
 }
 
 .reverse{
-	background-image: url('../img/card-reverse.PNG');
+	background-image: url('../../img/card-reverse.PNG');
 	transform: rotateY(180deg);
 	backface-visibility: hidden;
 	background-repeat: no-repeat;

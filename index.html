@@ -1,9 +1,39 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<!-- <link rel="stylesheet" href="./output/styles.min.css"> -->
-	<link rel="stylesheet" href="./css/styles.css">
+	<script>
+		var getBrowserInfo = function() {
+		    var ua= navigator.userAgent, tem, 
+		    M= ua.match(/(opera|chrome|safari|firefox|msie|trident(?=\/))\/?\s*(\d+)/i) || [];
+		    if(/trident/i.test(M[1])){
+		        tem=  /\brv[ :]+(\d+)/g.exec(ua) || [];
+		        return 'IE '+(tem[1] || '');
+		    }
+		    if(M[1]=== 'Chrome'){
+		        tem= ua.match(/\b(OPR|Edge)\/(\d+)/);
+		        if(tem!= null) return tem.slice(1).join(' ').replace('OPR', 'Opera');
+		    }
+		    M= M[2]? [M[1], M[2]]: [navigator.appName, navigator.appVersion, '-?'];
+		    if((tem= ua.match(/version\/(\d+)/i))!= null) M.splice(1, 1, tem[1]);
+		    return M.join(' ');
+		};
+		
+		const nav = getBrowserInfo()
+		const locationURL = location.href || window.location.href
+		var link = document.createElement('link');
+		link.setAttribute('rel', 'stylesheet');
+		link.setAttribute('type', 'text/css');
+		if(nav.includes('Safari')){
+			// link.setAttribute('href', './css/safari/styles.css');
+			link.setAttribute('href', './output/safari/styles.min.css');
+		}else{
+			// link.setAttribute('href', './css/styles.css');
+			link.setAttribute('href', './output/styles.min.css');
+		}
+		document.head.appendChild(link);
+
+	</script>
 	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.13.0/css/all.css" integrity="sha384-Bfad6CLCknfcloXFOyFnlgtENryhrpZCe29RTifKEixXQZ38WheV+i/6YWSzkz3V" crossorigin="anonymous">
 	<title>Cards Game</title>
@@ -27,8 +57,7 @@
 
 	<div class="config" style="display: none;">
 		<h2 class="config-title">Configure your decks</h2>
-		
-		<!-- <h2 class="config-title">Configure your decks or <span class="btn-upload">Upload Configuration File <i class="fas fa-file-upload"></i></span></h2> -->
+	
 		<div class="config-deck config-deck1">
 			
 			<button class="add-button">
@@ -239,7 +268,7 @@
 		<div class="deckDiscarded deckDiscarded3"></div>
 
 		<div class="deck deck1">
-			<button class="select-button">Selected</button>
+			<button class="select-button">Select</button>
 		</div>
 		<div class="deck deck2">
 			<button class="select-button">Select</button>
@@ -249,11 +278,20 @@
 		</div>
 	</div>
 
-	<!-- <script src="./output/polyfill.min.js"></script>
-	<script src="./output/app.min.js"></script> -->
-	<script src="js/checkNavigator.js"></script>
-	<script src="js/app.js"></script>
+	<script src="./output/polyfill.min.js"></script>
 
-	<script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+	<script>
+		var script = document.createElement('script');
+
+		if(nav.includes('Safari')){
+			// script.setAttribute('src','./js/safari/app.js');
+			script.setAttribute('src','./output/safari/app.min.js');
+		}else{
+			// script.setAttribute('src','./js/app.js');
+			script.setAttribute('src','./output/app.min.js');
+		}
+		document.body.appendChild(script);
+
+	</script>
 </body>
 </html>

@@ -320,7 +320,7 @@ body{
 	opacity: 1;
 	-ms-grid-rows: 1fr 1fr;
 	grid-template-rows: 1fr 1fr;
-	/*grid-row-gap: 2em;*/
+	grid-row-gap: 3em;
 }
 
 .deck{
@@ -346,10 +346,12 @@ body{
 	position: absolute;
 	left: calc(50% - 3em);
 	bottom: -1em;
-	background-color: hsl(120, 57%, 40%);
+	background-color: hsl(120, 57%, 40%);;
 	color: rgba(255,255,255,.9);
 	box-shadow: inset 0 0 20px 0 rgba(0,0,0,.4),
-				inset 0 0 0 5px rgba(0,0,0,.3);
+				inset 0 0 0 5px rgba(0,0,0,.1),
+				0 0 10px rgba(0,0,0,.7);
+	z-index: 100;
 }
 
 .deck .select-button:active{
@@ -378,14 +380,18 @@ body{
 	height: 21.4em;
 	transform-style: preserve-3d;
 	position: absolute;
-	top: calc(50% - 10.7em);
-	left: calc(50% - 7em);
 	top: 0;
 	left: 0;
 	-webkit-user-select: none;
 	   -moz-user-select: none;
 	    -ms-user-select: none;
 	        user-select: none;
+	transform: rotateY(-180deg);
+}
+
+.game-area.mode-config .card{
+	top: calc(50% - 10.7em);
+	left: calc(50% - 7em);
 }
 
 .game-area.mode-config .card::before{
@@ -414,7 +420,7 @@ body{
 }
 
 .reverse{
-	background-image: url('../img/card-reverse.PNG');
+	background-image: url('../../img/card-reverse.PNG');
 	transform: rotateY(180deg);
 	-webkit-backface-visibility: hidden;
 	        backface-visibility: hidden;

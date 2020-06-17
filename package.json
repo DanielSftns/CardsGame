@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "babel js -d output --watch"
+    "build-safari": "babel js/safari/ -d output/safari --watch",
+    "build": "babel js/app.js -d output --watch"
   },
   "author": "",
   "license": "ISC",
