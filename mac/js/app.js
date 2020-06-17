@@ -198,8 +198,8 @@ function ordenDecks(){
 			const translateX = Math.random() * 15
 			const translateY = Math.random() * 15
 
-			cards[i].style.webkitTransform = `translate(${translateX}px, ${translateY}px) rotateY(180deg)`
-			cards[i].style.transform = `translate(${translateX}px, ${translateY}px) rotateY(180deg)`
+			cards[i].style.webkitTransform = `translate(${translateX}px, ${translateY}px) rotateY(-180deg)`
+			cards[i].style.transform = `translate(${translateX}px, ${translateY}px) rotateY(-180deg)`
 		}
 	}
 }

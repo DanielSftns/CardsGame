@@ -344,8 +344,8 @@ body{
 	top: 0;
 	left: 0;
 	user-select: none;
-	-webkit-transform: rotateY(180deg);
-	transform: rotateY(180deg);
+	-webkit-transform: rotateY(-180deg);
+	transform: rotateY(-180deg);
 }
 
 .game-area.mode-config .card{
