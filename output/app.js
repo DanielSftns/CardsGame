@@ -188,13 +188,13 @@ function ordenDeck(deck) {
 function ordenDecks() {
   for (var i = 0; i < cardsContainers.length; i++) {
     var cards = cardsContainers[i].querySelectorAll('.card');
-    var space = 5;
+    var space = 0;
 
     for (var _i = 0; _i < cards.length; _i++) {
       cards[_i].style.transform = "translate(0px, -".concat(space, "px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)");
       cards[_i].style.zIndex = _i;
 
-      if (_i % 2 == 0) {
+      if (_i % 3 == 0 && _i!=0) {
         space += 5;
       }
     }
@@ -208,7 +208,7 @@ function ordenDeckDiscarded(deckDiscarded) {
     var card = cards[deckDiscarded.childElementCount - 2];
     var zIndex = card.style.zIndex;
     var space = getSpace(card.style.transform);
-    space = deckDiscarded.childElementCount % 2 == 0 ? space + 5 : space;
+    space = deckDiscarded.childElementCount % 3 == 0 ? space + 5 : space;
     var position = deckDiscarded.childElementCount - 1;
     cards[position].style.transition = "none";
     cards[position].style.top = "0";

@@ -207,12 +207,12 @@ function ordenDeck(deck){
 function ordenDecks(){
 	for(let i=0; i < cardsContainers.length; i++){
 		const cards = cardsContainers[i].querySelectorAll('.card')
-		let space = 5;
+		let space = 0;
 		for(let i=0; i<cards.length; i++){
 			cards[i].style.transform = `translate(0px, -${space}px) rotateX(-70deg) rotateY(180deg) rotateZ(-10deg)`
 			cards[i].style.zIndex = i;
 
-			if(i % 2 == 0){
+			if(i % 3 == 0 && i!=0){
 				space += 5
 			}
 		}
@@ -226,8 +226,8 @@ function ordenDeckDiscarded(deckDiscarded){
 		const zIndex = card.style.zIndex
 		let space = getSpace(card.style.transform)
 
-		space = (deckDiscarded.childElementCount % 2 == 0)? space + 5 : space
-
+		debugger
+		space = (deckDiscarded.childElementCount % 3 == 0)? space + 5 : space
 		const position = deckDiscarded.childElementCount - 1
 		cards[position].style.transition = "none"
 		cards[position].style.top = "0"
